@@ -1,80 +1,99 @@
-<script lang="ts">
+<script>
   import { get } from 'svelte/store'
   import { storage } from '../store'
+  import { Principal } from "@dfinity/principal";
 
   import { useConnect, useCanister } from "@connect2ic/svelte"
   import "@connect2ic/core/style.css"
 
   import Loader from "../components/Loader.svelte"
+  import NotConnected from "../components/NotConnected.svelte"
   import User from "../components/User.svelte"
   import Art from "../components/Art.svelte"
 
-  const [dao, {loading}] = useCanister("dao")
+  const [dao, {loading}] = useCanister("dao");
+  const [faucet] = useCanister("faucet");
   
-  const { status, isConnected, principal } = useConnect({});
-
-  export const setData = async () => {
-    let update = get(storage);
-    update.username = await $dao.getUsername([]);
-    console.log("update.username", update.username)
-    if (update.username.ok) {
-      update.username = update.username.ok;
-      console.log("update1", update)
-      storage.set(update);
+  const { status, isConnected, principal } = useConnect({
+    onDisconnect: () => {
+      let newUserData = {
+          principal: null,
+          username: null,
+          artworks: [],
+          loggedIn: false,
+          pfp: "\n\n\n\n\n\ \ \ \ \ \ \ \ ~ PFP not set ~\n\n\n\n\n\n\n\n\n",
+          tokenBalance: 0,
+      }
+      storage.set(newUserData);
     }
-    setPrincipal();
-  }
+  });
 
-  const setPrincipal = async () => {
-    console.log("setPrincipal")
+  let updateInProgress = false;
+
+  const refreshUserData = async () => {
+    updateInProgress = true;
     let update = get(storage);
-    update.principal = $principal.toString();
-    console.log("update2", update)
+    let profileData = await $dao.getProfileData();
+
+    if (profileData.err) {
+      update.username = profileData;
+      update.loggedIn = false;
+    }
+    if (profileData.ok) {
+      update.username = profileData.ok.username;
+      update.loggedIn = true;
+      if (profileData.ok.artworks[0] != undefined) {
+        update.artworks = profileData.ok.artworks[0];
+      };
+      if (profileData.ok.pfp[0] != undefined) {
+        (profileData.ok.artworks[0]).forEach((artwork) => {
+          if (artwork.title == profileData.ok.pfp[0]) {
+            update.pfp = artwork.art;
+          }
+        });
+      }
+    }
+    if ($principal !== undefined) {
+      update.principal = $principal.toString();
+    }
     storage.set(update);
-  }
+    if ($principal != null) {
+      let tb = await $faucet.checkAccountBalance({owner: Principal.fromText($principal), subaccount: [] });
+      update.tokenBalance = tb.accountBalance;
+      storage.set(update);
+    };
+    updateInProgress = false;
+  };
 
-  // set data
+  // update data again if connect2ic tries to use anonymous identity 🙄
   $ : {
-    if ($dao && !$loading && ($principal != get(storage).principal)) {
-      setData();
+    if (($dao && !$loading && ($principal !== get(storage).principal) || $storage.username?.err == 'anonymous') && !updateInProgress) {
+      refreshUserData();
     }
+  };
+
+  $ : {
+    console.log("storage update ", $storage)
   }
 
 </script>
-
-<h1>storage: {JSON.stringify($storage)}</h1>
-
 {#if $status == "initializing"}
   <Loader />
 {/if}
 
 {#if !$isConnected}
-    <pre style="text-align: center; margin: 5em 1em 1em 1em">
-           ,#%%%%%%%%%%%(                             /(((((((((((#.            
-      #%%%%%%%%%%%%%%%%%%%%*                   *(((((((((((((((((####(        
- ./%%%%%%%%%%%%%%%%%%%%%%%%%%%%,           ,((((((((((((((((((##########*     
-#&%%&&@@@@@@@#(((//#%%%%%%%%%%%%%/.     .*((((((((((((((*****/#########%%%(,  
-#&&@@@@@@@%*          ./%%%%%%%%%%%%#* ,(((((((((((((*           ,####%%%%%%%/ 
-&&@@@@@@@(.                ,#%%%%%%%%%%%#(((((((((/.                ./%%%%&&&&% 
-@@@@@@@@@*                    /%%%%%%%%%%%#(((((,                     ,&&&&&&@@@
-@@@@@@&&.                       .%%%%%%%%%%%#(                        ,&&&@@@@@@
-@@@@&&&&,                      .(((#%%%%%%%%%%%%,                     ,&@@@@@@@@
-@&&&&&&%%,                   *(((((((#%%%%%%%%%%%%(                  /@@@@@@@@&%
-#&&&%%%%%%/.              ,((((((((((((/%%%%%%%%%%%%%,             ,%@@@@@@@&&% 
-*#%%%%%####(,,       ./((((((((((((/.   *#%%%%%%%%%%%%%(**    .//&@@@@@@@&&%(  
- .(%############(((((((((((((((((,        ./%%%%%%%%%%%%%%%%&&&&&&&&&&%%%%/.   
-    ,#########((((((((((((((((/.              .(%%%%%%%%%%%%%%%%%%%%%%%%,      
-      . /##(((((((((((((((#,                      ,%%%%%%%%%%%%%%%%%/          
-    </pre>
-    <h2 class="font-mono" style="width: 100%; text-align: center; margin: 4em 0; left: 0">please connect your wallet (in the upper right) to view your profile</h2>
+    <NotConnected />
 {:else}
     <div class="flex justify-center">
-      <div class="flex justify-center w-1/3 p-10">
-          <User />
+      <div class="flex justify-center w-2/5 p-10" style="height: 80vh">
+        <User />
       </div>
-      <div class="divider divider-horizontal"></div>
-      <div class="flex justify-center w-2/3 p-10">
-        <Art />
+      <div class="flex justify-center w-3/5 p-10" style="border-left: 1px dotted gray; transform: translate(0, 1%)">
+        {#if $storage.loggedIn}
+          <Art />
+        {:else}
+          <p></p>
+        {/if}
       </div>
     </div>
 {/if}

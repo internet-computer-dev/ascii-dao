@@ -8,6 +8,7 @@ import D "mo:base/Debug";
 import R "mo:base/Result";
 import P "mo:base/Principal";
 import Tx "mo:base/Text";
+import I "mo:base/Iter";
 import A "mo:base/Array";
 import F "mo:base/Float";
 import T "./types";
@@ -49,6 +50,29 @@ actor class AsciiDao() = this {
     // add a new ascii artwork
     public shared ({caller}) func newArt( title: Text, art: Text ) : async R.Result<Text, Text> {
         if (RBT.get(profiles, Tx.compare, P.toText(caller)) == null){return #err("only principals with a username can create art")};
+
+        // validate artwork size is 30 x 15 or smaller
+        var lineCount = 0;
+        for (line in Tx.split(art, #text "\n")) {
+            if (line.size() > 30) {return #err("art cannot be wider than 30 characters")};
+            lineCount += 1;
+        };
+        if (lineCount > 15) {return #err("art cannot be taller than 15 characters")};
+
+        // check for duplicate art title
+        let profile = switch (RBT.get(profiles, Tx.compare, P.toText(caller))){
+            case (null) { return #err("artist profile not found")};
+            case (?val) {val};
+        };
+        let art_ : [T.Artwork] = switch (profile.artworks) {
+            case (null) {[]};
+            case (?val) {val};
+        };
+        switch (A.find<T.Artwork>(art_, func x = x.title == title)) {
+            case (null) {};
+            case (_) { return #err("artist already has artwork with title " # title)};
+        };
+
         // update profile with new artwork
         profiles := (RBT.update<Text, T.Profile>(profiles, Tx.compare, P.toText(caller), func (update : ?T.Profile) : T.Profile {
             switch (update) {
@@ -182,7 +206,6 @@ actor class AsciiDao() = this {
     };
 
     // NYI remove artwork, remove user, change username etc.
-    // NYI ascii art style validation
 
     
     // .______   .______        ______   .______     ______        _______.     ___       __           _______.
@@ -319,19 +342,20 @@ actor class AsciiDao() = this {
 
         // check to see if caller already voted
         var p : T.Proposal = B.get(proposals, uProposalIndex);
+        var pCopy : T.Proposal = B.get(proposals, uProposalIndex);
         if ((A.find<Principal>(p.voters, func x = x == caller)) != null) {return #err("user has already voted on this proposal")};
 
         // check to see if caller has enough mb tokens
         let balance = await getMBBalance(caller);
         if (balance <= parameters.tokenThreshold) {return #err("not enough mb tokens to vote")};
 
-        // update proposal voteTally
+        // update proposal voteTally and voters
         switch (stance) {
             case (#Yay) { 
-                p := {action = p.action; proposer = p.proposer; voters = p.voters; note = p.note; artwork = p.artwork; voteTally = (p.voteTally + balance)};
+                p := {action = p.action; proposer = p.proposer; voters = A.append(p.voters, [caller]); note = p.note; artwork = p.artwork; voteTally = (p.voteTally + balance)};
             }; 
             case (#Nay) {  
-                p := {action = p.action; proposer = p.proposer; voters = p.voters; note = p.note; artwork = p.artwork; voteTally = (p.voteTally - balance)};
+                p := {action = p.action; proposer = p.proposer; voters = A.append(p.voters, [caller]); note = p.note; artwork = p.artwork; voteTally = (p.voteTally - balance)};
             };  
         };
 
@@ -349,7 +373,7 @@ actor class AsciiDao() = this {
             };
             // delete from proposals
             var pArray = B.toArray(proposals);
-            pArray := A.filter<T.Proposal>(pArray, func x = x != p);
+            pArray := A.filter<T.Proposal>(pArray, func x = x != pCopy);
             proposals := B.fromArray(pArray);
             // add to proposal archives
             B.add(archivedProposals, p);
@@ -357,7 +381,7 @@ actor class AsciiDao() = this {
         } else if (p.voteTally <= -parameters.votingThreshold) {
             // delete from proposals
             var pArray = B.toArray(proposals);
-            pArray := A.filter<T.Proposal>(pArray, func x = x != p);
+            pArray := A.filter<T.Proposal>(pArray, func x = x != pCopy);
             proposals := B.fromArray(pArray);
             // add to proposal archives
             B.add(archivedProposals, p);
@@ -825,7 +849,7 @@ actor class AsciiDao() = this {
         P.toText(caller)
     };
 
-    public func getTime () : async Int {
+    public func timeNow () : async Int {
         Time.now()
     };
 };

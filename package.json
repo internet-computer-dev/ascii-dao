@@ -10,6 +10,7 @@
     "@connect2ic/core": "^0.1.1",
     "@connect2ic/svelte": "^0.1.1",
     "@dfinity/agent": "^0.11.3",
+    "@dfinity/principal": "^0.11.3",
     "svelte-routing": "^1.6.0"
   },
   "devDependencies": {
