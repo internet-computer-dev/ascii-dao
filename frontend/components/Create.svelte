@@ -53,20 +53,20 @@
     };
 </script>
 
-<div class="m-9">
-<label>neuron name</label>
-<input type="text" id="neuronName" placeholder="choosea unique neuron name" class="input input-bordered input-success w-full max-w-xs" bind:value={neuronName}/>
+<div class="m-9" style="min-width: 1450px">
+<label class="mt-9">neuron name</label>
+<input type="text" id="neuronName" placeholder="choosea unique neuron name" class="input input-bordered input-success w-full max-w-xs mt-9" bind:value={neuronName}/>
 
-<label>dissolve delay (in days)</label>
-<input type="number" class="input input-bordered input-success" min="0" bind:value={dissolveDelay}>
+<label class="mt-9">dissolve delay (in days)</label>
+<input type="number" class="input input-bordered input-success mt-9" min="0" bind:value={dissolveDelay}>
 
-<label>amount to stake (minimum: 50)</label>
-<input type="number" class="input input-bordered input-success" min="50" bind:value={nAmount}>
+<label class="mt-9">amount to stake (minimum: 50)</label>
+<input type="number" class="input input-bordered input-success mt-9" min="50" bind:value={nAmount}>
 
 {#if !creating}
-    <button class="btn btn-outline btn-success" on:click={createNeuron}>create</button>
+    <button class="btn btn-outline btn-success mt-9" on:click={createNeuron}>create</button>
 {:else}
-    <button class="btn btn-outline btn-success btn-disabled">create</button><br>
-    <progress class="progress w-100 p-3 mt-5"></progress>
+    <button class="btn btn-outline btn-success btn-disabled mt-9">create</button><br>
+    <progress class="progress w-100 p-3 mt-9"></progress>
 {/if}
 </div>

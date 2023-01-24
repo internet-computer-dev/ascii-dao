@@ -100,8 +100,8 @@
 </div>
 
 <!-- needs to log in -->
-<div class="flex flex-col w-full border-opacity-50">
-    <div class="p-6 bg-base-300 rounded-box" >
+<div class="flex flex-col w-full border-opacity-50" style="min-width: 1500px">
+    <div class="p-6 bg-base-300 rounded-box" style="min-width: 1800px">
         <label style="font-weight: bold">new gallery proposal</label>
         <select class="select select-bordered w-full max-w-xs" bind:value={action}>
             <option disabled selected>action</option>
@@ -117,8 +117,8 @@
         <button class="btn btn-outline btn-success btn-disabled">submit</button>
         {/if}
     </div>
-    <div class="divider" style="font-size: 1.5em; margin: 1em">ACTIVE PROPOSALS</div>
-    <div class="grid grid-cols-4 auto-rows-max bg-base-300 rounded-box p-5 gap-10">
+    <div class="divider" style="font-size: 1.5em; margin: 1em;">ACTIVE PROPOSALS</div>
+    <div class="grid grid-cols-4 auto-rows-max bg-base-300 rounded-box p-5 gap-10" style="min-width: 1800px">
         {#if $proposal.active != null && $proposal.active[0]}
         {#each $proposal.active as p}
             <div class="card bg-base-100 shadow-xl" style="width: 27rem">

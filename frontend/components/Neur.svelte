@@ -78,13 +78,13 @@
 
 <div style="display: flex; align-items: center; flex-direction: column;">
 <div style="padding: 3em">
-  <div style="display: flex; background: black; width: 90vw; min-height: 60vh; border-radius: 9999px; align-items: center; justify-content: center; flex-direction:column;">
+  <div style="display: flex; background: black; width: 90vw; min-width: 1200px; min-height: 60vh; border-radius: 9999px; align-items: center; justify-content: center; flex-direction:column;">
       <!-- <div style="color:antiquewhite; font-size:4em;">{name}</div><br><br> -->
       <img style="height: 100%;" alt="neuron" src={neuron} />  
   </div>      
 </div>
 
-<div class="card bg-primary text-primary-content mb-9" style="width: 50vw">
+<div class="card bg-primary text-primary-content mb-9" style="width: 50vw; min-width: 800px">
     <div class="card-body">
         <h2 class="card-title" style="font-size: 2.5em; color:antiquewhite">{name}</h2>
         <div><div style="color:green">owner: </div>{neuronData.owner}</div>
