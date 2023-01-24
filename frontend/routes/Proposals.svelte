@@ -1,8 +1,11 @@
 <script>
-    import { proposal } from '../store'
-    import { useCanister } from "@connect2ic/svelte"
+    import { proposal, parameters } from '../store'
+    import { useCanister, useConnect } from "@connect2ic/svelte"
+
+    import NotConnected from "../components/NotConnected.svelte"
 
     const [ dao ] = useCanister("dao")
+    const { isConnected } = useConnect({});
 
     let artist = "";
     let title = "";
@@ -27,6 +30,13 @@
             }
         } else if (result.err) { window.alert(result.err) }
         processing = false;
+        let gallery = await $dao.getDaoGallery();
+        if (gallery.ok) {
+            let update = $proposal;
+            console.log(gallery.ok[0])
+            update.daoGallery = gallery.ok;
+            proposal.set(update);
+        }
     };
 
     const submitProposal = async () => {
@@ -63,13 +73,27 @@
         refreshing = false;
     };
 
+    const updateParameters = async () => {
+        let getParameters = await $dao.getParameters();
+        let update = $parameters;
+        update = getParameters;
+        update.updated = true;
+        parameters.set(update);
+        console.log($parameters);
+    }
+
     $ : {
         if ($proposal.active == null && !refreshing) {
             getProposals()
+            updateParameters()
         }
     }
 
 </script>
+
+{#if !$isConnected}
+    <NotConnected page={"proposals"}/>
+{:else}
 
 <div style="margin: 2em; width: 80%">
     <h1 style="font-size: 3em">Proposals</h1>
@@ -88,13 +112,13 @@
         <input type="text" id="title" placeholder="art title" class="input input-bordered input-success w-full max-w-xs" bind:value={title} />
         <input type="text" id="note" placeholder="note" class="input input-bordered input-success w-full max-w-xs" bind:value={note}/>
         {#if !submitting}
-        <button class="btn btn-outline btn-success" on:click={submitProposal}>Submit</button>
+        <button class="btn btn-outline btn-success" on:click={submitProposal}>submit</button>
         {:else}
-        <button class="btn btn-outline btn-success btn-disabled">Submit</button>
+        <button class="btn btn-outline btn-success btn-disabled">submit</button>
         {/if}
     </div>
     <div class="divider" style="font-size: 1.5em; margin: 1em">ACTIVE PROPOSALS</div>
-    <div class="grid grid-cols-4 auto-rows-max bg-base-300 rounded-box p-5 gap-48">
+    <div class="grid grid-cols-4 auto-rows-max bg-base-300 rounded-box p-5 gap-10">
         {#if $proposal.active != null && $proposal.active[0]}
         {#each $proposal.active as p}
             <div class="card bg-base-100 shadow-xl" style="width: 27rem">
@@ -110,10 +134,12 @@
                     <!-- principal: {p.proposer}<br> -->
                     note: {p.note.length == 0 ? "none" : p.note[0]}<br>
                     number of voters: {p.voters.length}<br>
+                    votes needed to pass: {Number($parameters.parameters.votingThreshold) / 100000000}MB<br>
+                    tokens needed to vote: {Number($parameters.parameters.tokenThreshold) / 100000000}MB<br>
                     vote tally: {Number(p.voteTally) / 100000000}<br>
                         <div>
-                            <progress class="progress w-20 progress-error" style="transform: rotate(180deg);" value="{Number(p.voteTally) / 100000000 < 0 ? Math.abs(Number(p.voteTally) / 100000000) : 0}" max="100"></progress>
-                            <progress class="progress w-20 progress-success" value="{Number(p.voteTally) / 100000000 > 0 ? Number(p.voteTally) / 100000000 : 0}" max="100"></progress>
+                            <progress class="progress w-20 progress-error" style="transform: rotate(180deg); color: firebrick;" value="{Number(p.voteTally) / 100000000 < 0 ? Math.abs(Number(p.voteTally) / 100000000) : 0}" max="{Number($parameters.parameters.votingThreshold) / 100000000}"></progress>
+                            <progress class="progress w-20 progress-success" value="{Number(p.voteTally) / 100000000 > 0 ? Number(p.voteTally) / 100000000 : 0}" max="{Number($parameters.parameters.votingThreshold) / 100000000}"></progress>
                         </div><br>
                     <b style="font-size: 1.3em">vote:</b>
                     </div>
@@ -139,8 +165,4 @@
     </div>
 </div>
 
-
-<!-- submitProposal( action : T.Action, artist : Text, title : Text, note : ?Text )
-getAllProposals ( proposer : ?Principal )
-getArchivedProposals ( proposer : ?Principal )
- -->
+{/if}

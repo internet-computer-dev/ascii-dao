@@ -31,6 +31,7 @@
 
 {#if $proposal.daoGallery != null && $proposal.daoGallery[0]}
 {#each $proposal.daoGallery as art}
+<div class="grid grid-cols-4 auto-rows-max bg-base-300 rounded-box p-5 gap-48">
     <div class="card bg-base-100 shadow-xl" style="width: 27rem">
         <figure class="px-10 pt-10">
             <div class="mockup-code m-3 mb-0">
@@ -41,5 +42,6 @@
             <h1 class="card-title">artist: {art.artist}</h1>
         </div>
     </div>
+</div>
 {/each}
 {/if}

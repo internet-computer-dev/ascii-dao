@@ -72,7 +72,7 @@
     <button class="connect-button" on:click={newUser}>create</button>
   {:else if $principal && $storage.username}
     <p style="font-size: 2.5em;">{$storage.username}</p>
-    <p style="font-size: 1.2em;">Token Balance: {BigInt($storage.tokenBalance) / BigInt(100000000)}MB</p>
+    <p style="font-size: 1.2em;">Token Balance: {$storage.TBupdated ? (BigInt($storage.tokenBalance) / BigInt(100000000)).toString() + "MB" : "fetching . . ."}</p>
     {#if !minting}
     <button class="btn-success btn-outline" on:click={mint}>mint 10 MB tokens</button>
     {:else}

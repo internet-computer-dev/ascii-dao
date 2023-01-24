@@ -37,6 +37,7 @@ module {
     };
 
     public type Neuron = {
+        name: Text;
         owner: Principal;
         amount: Nat;
         creationTime: Int;

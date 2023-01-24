@@ -87,7 +87,7 @@ actor class AsciiDao() = this {
     };
 
     // get all user profile data
-    public shared ({caller}) func getProfileData() : async R.Result<T.Profile, Text> {
+    public shared query ({caller}) func getProfileData() : async R.Result<T.Profile, Text> {
         
         if (P.isAnonymous(caller)) { return #err("anonymous") };
 
@@ -99,7 +99,7 @@ actor class AsciiDao() = this {
     };
 
     // get username from principal. if null, gets caller username
-    public shared ({caller}) func getUsername( principal : ?Text ) : async R.Result<Text, Text> {
+    public shared query ({caller}) func getUsername( principal : ?Text ) : async R.Result<Text, Text> {
         
         if (P.isAnonymous(caller)) { return #err("anonymous") };
 
@@ -121,7 +121,7 @@ actor class AsciiDao() = this {
     };
 
     // get principal from username
-    public shared func getPrincipal( username : Text ) : async R.Result<Text, Text> {
+    public shared query func getPrincipal( username : Text ) : async R.Result<Text, Text> {
         
         for ((k,v) in RBT.iter(profiles, #fwd)) {
             if (v.username == username) { return #ok(k); };
@@ -132,7 +132,7 @@ actor class AsciiDao() = this {
     };
 
     // get single artwork or all my artworks if null. specify principal or leave null if caller
-    public shared ({caller}) func getArt( title: ?Text, principal: ?Text ) : async R.Result<?[T.Artwork], Text> {
+    public shared query ({caller}) func getArt( title: ?Text, principal: ?Text ) : async R.Result<?[T.Artwork], Text> {
 
         // get art of principal entered or caller
         var theArt : ?[T.Artwork] = null;
@@ -205,6 +205,33 @@ actor class AsciiDao() = this {
         return(#ok("PFP set to " # title))
     };
 
+    // get username from principal. if null, gets caller username
+    public shared query ({caller}) func getPfp( principal : ?Text ) : async R.Result<Text, Text> {
+
+        switch(principal) {
+            case (null) {
+                switch (RBT.get(profiles, Tx.compare, P.toText(caller))) {
+                    case ( null ) { return #err("user not found") };
+                    case ( ?user ) { switch(user.pfp){
+                        case ( null ) { return #err("no pfp") };
+                        case ( ?pfp ) { return #ok(pfp) };
+                        };
+                    };
+                };
+            };
+            case (?p) {
+                switch (RBT.get(profiles, Tx.compare, p)) {
+                    case ( null ) { return #err("user not found") };
+                    case ( ?user ) { switch(user.pfp){
+                        case ( null ) { return #err("no pfp") };
+                        case ( ?pfp ) { return #ok(pfp) };
+                    };
+                    };
+                };
+            };
+        };
+    };
+
     // NYI remove artwork, remove user, change username etc.
 
     
@@ -272,7 +299,7 @@ actor class AsciiDao() = this {
     };
 
     // get proposal on specific artwork
-    public func getProposals ( artwork : T.GalleryArtwork ) : async R.Result<T.Proposal, Text> {
+    public shared query func getProposals ( artwork : T.GalleryArtwork ) : async R.Result<T.Proposal, Text> {
         for (proposal in B.vals(proposals)) {
             if (proposal.artwork == artwork) {
                 return #ok(proposal)
@@ -282,7 +309,7 @@ actor class AsciiDao() = this {
     };
 
     // get all proposals. if principal specified, gets all proposals of only that principal
-    public func getAllProposals ( proposer : ?Principal ) : async R.Result<[T.Proposal], Text> {
+    public shared query func getAllProposals ( proposer : ?Principal ) : async R.Result<[T.Proposal], Text> {
         switch (proposer) {
             case (null) { // get all proposals
                 return #ok(B.toArray(proposals));
@@ -300,7 +327,7 @@ actor class AsciiDao() = this {
     };
 
     // get all archived proposals. if principal specified, gets all archived proposals of only that principal
-    public func getArchivedProposals ( proposer : ?Principal ) : async R.Result<[T.Proposal], Text> {
+    public shared query func getArchivedProposals ( proposer : ?Principal ) : async R.Result<[T.Proposal], Text> {
         switch (proposer) {
             case (null) { // get all proposals
                 return #ok(B.toArray(archivedProposals));
@@ -318,7 +345,7 @@ actor class AsciiDao() = this {
     };
 
     // get all artworks in dao gallery
-    public func getDaoGallery () : async R.Result<[T.GalleryArtwork], Text> {
+    public shared query func getDaoGallery () : async R.Result<[T.GalleryArtwork], Text> {
         return #ok(B.toArray(daoGallery));
     };
 
@@ -408,7 +435,7 @@ actor class AsciiDao() = this {
 
     // createNeuron - minimum 50 MB tokens
     public shared ({caller}) func createNeuron( amount : Nat, dissolveDelay : Int, txReceipt : Nat, name : Text ) : async R.Result<Text, Text> {
-        if (amount < 50_010_000_00) {
+        if (amount < 50_000_000_00) {
             return #err("minimum amount to create a neuron is 50MB")
         };
         // check if tx was already used
@@ -434,6 +461,7 @@ actor class AsciiDao() = this {
 
         // create neuron
         neurons := RBT.put(neurons, Tx.compare, name, {
+            name = name;
             owner = caller;
             amount = amount;
             creationTime = Time.now();
@@ -449,7 +477,7 @@ actor class AsciiDao() = this {
     };
 
     // get neuron by name
-    public func getNeurons ( name : Text ) : async R.Result<T.Neuron, Text> {        
+    public shared query func getNeurons ( name : Text ) : async R.Result<T.Neuron, Text> {        
         switch (RBT.get(neurons, Tx.compare, name)) {
             case (null) { return #err("neuron not found") };
             case (?val) { return #ok(val)};
@@ -457,7 +485,7 @@ actor class AsciiDao() = this {
     };
 
     // get all neurons. if principal specified, gets all neurons of only that principal
-    public func getAllNeurons ( owner : ?Principal ) : async R.Result<[T.Neuron], Text> {
+    public shared query func getAllNeurons ( owner : ?Principal ) : async R.Result<[T.Neuron], Text> {
         let allNeurons = B.initPresized<T.Neuron>(RBT.size(neurons));
 
         for ((k,v) in RBT.iter(neurons, #fwd)) {
@@ -475,7 +503,7 @@ actor class AsciiDao() = this {
     };
 
     // get all archived neurons. if principal specified, gets all neurons of only that principal
-    public func getAllArchivedNeurons ( owner : ?Principal ) : async R.Result<[T.Neuron], Text> {
+    public shared query func getAllArchivedNeurons ( owner : ?Principal ) : async R.Result<[T.Neuron], Text> {
         let allArchivedNeurons = B.initPresized<T.Neuron>(RBT.size(neuronsArchive));
 
         for ((k,v) in RBT.iter(neuronsArchive, #fwd)) {
@@ -514,8 +542,9 @@ actor class AsciiDao() = this {
         // update neuron state and dissolve start time
         neurons := (RBT.update<Text, T.Neuron>(neurons, Tx.compare, name, func (update : ?T.Neuron) : T.Neuron {
             switch (update) {
-                case ( null ) { return {owner = P.fromText("aaaaa-aa"); amount = 0; creationTime = 0; dissolveStartTime = null; dissolveDelay = 0; state = #Locked;}};
+                case ( null ) { return {name = ""; owner = P.fromText("aaaaa-aa"); amount = 0; creationTime = 0; dissolveStartTime = null; dissolveDelay = 0; state = #Locked;}};
                 case ( ?val ) { return {
+                    name = val.name;
                     owner = val.owner;
                     amount = val.amount;
                     creationTime = val.creationTime;
@@ -530,6 +559,9 @@ actor class AsciiDao() = this {
 
     // increase dissolve delay
     public shared ({caller}) func increaseDissolveDelay( name : Text, add : Int) : async R.Result<Int, Text> {
+        // make sure add is positive number
+        if (add <= 0) {return #err("must increase by more than 0")};
+
         // get neuron
         let n = switch (RBT.get(neurons, Tx.compare, name)) {
             case (null) { return #err("neuron not found") };
@@ -549,8 +581,9 @@ actor class AsciiDao() = this {
         // update neuron dissolveDelay
         neurons := (RBT.update<Text, T.Neuron>(neurons, Tx.compare, name, func (update : ?T.Neuron) : T.Neuron {
             switch (update) {
-                case ( null ) { return {owner = P.fromText("aaaaa-aa"); amount = 0; creationTime = 0; dissolveStartTime = null; dissolveDelay = 0; state = #Locked;}};
+                case ( null ) { return {name = ""; owner = P.fromText("aaaaa-aa"); amount = 0; creationTime = 0; dissolveStartTime = null; dissolveDelay = 0; state = #Locked;}};
                 case ( ?val ) { return {
+                    name = val.name;
                     owner = val.owner;
                     amount = val.amount;
                     creationTime = val.creationTime;
@@ -615,6 +648,7 @@ actor class AsciiDao() = this {
 
         // update state to dissolved and archive neuron
         let updatedNeuron = {
+            name = n.name;
             owner = n.owner;
             amount = n.amount;
             creationTime = n.creationTime;
@@ -628,7 +662,7 @@ actor class AsciiDao() = this {
     };
 
     // calculate voting power of neuron
-    private func calculateVotingPower(amount : Nat, dissolveDelay : Int, creationTime: Int) : async Nat {
+    public shared query func calculateVotingPower(amount : Nat, dissolveDelay : Int, creationTime: Int) : async Nat {
         var dissolveDelayBonus : Float = 1;
         if (dissolveDelay >= 252460800000000000) { //96 months
             dissolveDelayBonus := 2;
@@ -845,11 +879,11 @@ actor class AsciiDao() = this {
     //⠀⠀⠀⠀⠀⠀⠄⢛⠛⠋⢛⠙⠛⠿⠿⠿⠿⠛⠉⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀
     //⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 
-    public shared ({caller}) func whoami() : async Text {
+    public shared query ({caller}) func whoami() : async Text {
         P.toText(caller)
     };
 
-    public func timeNow () : async Int {
+    public shared query func timeNow() : async Int {
         Time.now()
     };
 };

@@ -2,7 +2,7 @@
     <h1 style="font-size: 3em">About</h1>
 
     <p>
-        This repo was created in less than a week for the Motoko Bootcamp 2023 core project.
+        This fully-featured, fully-on-chain DAO was created in a week for the Motoko Bootcamp 2023 core project.
         <br><br>
         The ASCII DAO allows an ICP principal to create a on-chain profile that can store ASCII art to their username. It also gives the ability to set one of the artworks as a PFP.
         <br><br>
@@ -13,14 +13,16 @@
         Neurons with a dissolve delay of over 6 months can participate in voting to modify the token threshold and voting threshold parameters as well as vote to enable quadratic voting. Requirements for the core project can be found <a href="https://github.com/motoko-bootcamp/motokobootcamp-2023/blob/main/core_project/PROJECT.MD" style="color:darkcyan">here</a>
         <br><br>
         <br>
-        Here is one of many places to find ASCII art for testing:<br>
+        Here is one of many places to find ASCII art for testing purposes:<br>
         <a href="https://www.asciiart.eu/" style="color:darkcyan">https://www.asciiart.eu/</a>
         <br><br>
-        And here is a cool tool to generate dot art from an image:<br>
+        And here is a cool tool to generate dot-ascii art from an image file:<br>
         <a href="https://emojicombos.com/dot-art-generator" style="color:darkcyan">https://emojicombos.com/dot-art-generator</a>
         <br><br>
         <br>
         The GitHub repo for this webpage can be found below:<br>
-        <a href="https://github.com/internet-computer-dev/ascii-dao" style="color:darkcyan">https://github.com/internet-computer-dev/ascii-dao</a>
+        <a href="https://github.com/internet-computer-dev/ascii-dao" style="color:darkcyan">https://github.com/internet-computer-dev/ascii-dao</a><br><br>
+        And lastly, if you want to join an empty Discord, it might be a while before anything happens, but one day there may be a surprise for early birds ;)<br>
+        <a href="https://discord.gg/waHBtmhFSD" style="color:darkcyan">Internet Degens</a>
     </p>
 </div>

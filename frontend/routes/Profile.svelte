@@ -60,6 +60,7 @@
     if ($principal != null) {
       let tb = await $faucet.checkAccountBalance({owner: Principal.fromText($principal), subaccount: [] });
       update.tokenBalance = tb.accountBalance;
+      update.TBupdated = true;
       storage.set(update);
     };
     updateInProgress = false;
@@ -67,7 +68,7 @@
 
   // update data again if connect2ic tries to use anonymous identity 🙄
   $ : {
-    if (($dao && !$loading && ($principal !== get(storage).principal) || $storage.username?.err == 'anonymous') && !updateInProgress) {
+    if (($dao && !$loading && ($principal !== get(storage).principal) || $storage.username?.err == 'anonymous') && !updateInProgress && $status != "idle") {
       refreshUserData();
     }
   };
@@ -82,7 +83,7 @@
 {/if}
 
 {#if !$isConnected}
-    <NotConnected />
+    <NotConnected page={"profile"}/>
 {:else}
     <div class="flex justify-center">
       <div class="flex justify-center w-2/5 p-10" style="height: 80vh">

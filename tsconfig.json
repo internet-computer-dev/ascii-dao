@@ -41,6 +41,7 @@
     "./plugins/**/*",
     "./typings/**/*",
     "**/store.js",
-    "**/**.did.js"
+    "**/**.did.js",
+    "**/onload.js"
   ]
 }

@@ -1,3 +1,7 @@
+<script>
+	export let page;
+</script>
+
 <pre style="text-align: center; margin: 5em 1em 1em 1em">
     ,#%%%%%%%%%%%(                             /(((((((((((#.            
 #%%%%%%%%%%%%%%%%%%%%*                   *(((((((((((((((((####(        
@@ -15,4 +19,4 @@
 ,#########((((((((((((((((/.              .(%%%%%%%%%%%%%%%%%%%%%%%%,      
 . /##(((((((((((((((#,                      ,%%%%%%%%%%%%%%%%%/          
 </pre>
-<h2 class="font-mono" style="width: 100%; text-align: center; margin: 4em 0 0; left: 0">please connect your wallet (in the upper right corner) to view your profile</h2>
+<h2 class="font-mono" style="width: 100%; text-align: center; margin: 4em 0 0; left: 0">please connect your wallet (in the upper right corner) to view your {page}</h2>
