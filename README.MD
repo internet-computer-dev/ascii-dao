@@ -8,7 +8,7 @@
                                                                                    
 ```
 
-This repo was created in less than a week for the Motoko Bootcamp 2023 core project.
+This repo was created in a week for the Motoko Bootcamp 2023 core project.
 
 The ASCII DAO allows an ICP principal to create a on-chain profile that can store ASCII art to their username. It also gives the ability to set one of the artworks as a PFP.
 
@@ -21,3 +21,11 @@ Neurons with a dissolve delay of over 6 months can participate in voting to modi
 Play around with the on-chain deployment at:
 
 https://gtnjc-eaaaa-aaaai-qhmva-cai.raw.ic0.app/
+
+You can also have a peek at the backend represented through candid interface:
+
+https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=gtnjc-eaaaa-aaaai-qhmva-cai
+
+<br>
+And lastly, if you want to join an empty Discord, it might be a while before anything happens, but one day there may be a surprise for early birds ;)<br>
+<a href="https://discord.gg/waHBtmhFSD" style="color:darkcyan">Internet Degens</a>
