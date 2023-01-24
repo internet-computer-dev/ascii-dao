@@ -65,8 +65,8 @@
 
   <div class="grid grid-cols-3 gap-4">
   {#each $storage.artworks as art}
-    <div class="mockup-code m-3">
-      <pre style="color:gray; height: 23.5em">{art.title}<br><code style="color:antiquewhite">{art.art}</code></pre>
+    <div class="mockup-code m-3 mr-7">
+      <pre style="color:gray; height: 23.5em; overflow: hidden">{art.title}<br><code style="color:antiquewhite">{art.art}</code></pre>
     </div>
   {/each}
   </div>

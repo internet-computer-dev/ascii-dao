@@ -124,7 +124,7 @@
             <div class="card bg-base-100 shadow-xl" style="width: 27rem">
                 <figure class="px-10 pt-10">
                     <div class="mockup-code m-3 mb-0">
-                        <pre style="color:gray; height: 23.5em">{p.artwork.title}<br><code style="color:antiquewhite">{p.artwork.art}</code></pre>
+                        <pre style="color:gray; height: 23.5em; overflow:hidden">{p.artwork.title}<br><code style="color:antiquewhite">{p.artwork.art}</code></pre>
                     </div>
                 </figure>
                 <div class="card-body items-center text-center">
