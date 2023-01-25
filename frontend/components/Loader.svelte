@@ -1,4 +1,19 @@
+<script>
+
+  export let notLoading = false;
+  async function wait() {
+    await new Promise(resolve => setTimeout(resolve, 8800));
+    notLoading = true;
+  }
+  wait();
+  
+</script>
+
+{#if notLoading == false}
 <div class="lds-facebook"><div></div><div></div><div></div></div>
+{:else}
+<div class="lds-facebook">Try logging into your wallet and reloading</div>
+{/if}
 
 <style>
 .lds-facebook {

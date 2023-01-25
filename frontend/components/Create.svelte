@@ -14,6 +14,10 @@
     let creating = false;
     const createNeuron = async () => {
         creating = true;
+        const getNeuron = $dao.getNeurons(neuronName);
+        if(getNeuron.err){
+            window.alert("neuron name is already taken")
+        } else {
         if (nAmount >= 50) {
             let transfer = await $tokens.icrc1_transfer(
                 {to : { 
@@ -48,7 +52,7 @@
                     }
                 } else if (result.err) { window.alert(result.err) }
             }
-        } else { window.alert("stake must be greater than 50!") } 
+        } else { window.alert("stake must be greater than 50!") }}
         creating = false;
     };
 </script>

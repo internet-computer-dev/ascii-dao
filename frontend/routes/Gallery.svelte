@@ -30,7 +30,7 @@
 </div>
 
 {#if $proposal.daoGallery != null && $proposal.daoGallery[0]}
-<div class="grid grid-flow-col auto-cols-max bg-base-300 rounded-box p-5">
+<div class="grid grid-flow-col auto-cols-max bg-base-300 rounded-box p-5 gap-10">
 {#each $proposal.daoGallery as art}
     <div class="card bg-base-100 shadow-xl" style="width: 27rem">
         <figure class="px-10 pt-10">

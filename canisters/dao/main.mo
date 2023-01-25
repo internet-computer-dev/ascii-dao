@@ -476,12 +476,17 @@ actor class AsciiDao() = this {
         return #ok("neuron \"" # name # "\" has been created");
     };
 
-    // get neuron by name
+    // get neuron by name (including archives)
     public shared query func getNeurons ( name : Text ) : async R.Result<T.Neuron, Text> {        
         switch (RBT.get(neurons, Tx.compare, name)) {
-            case (null) { return #err("neuron not found") };
+            case (null) { };
             case (?val) { return #ok(val)};
         };
+        switch (RBT.get(neuronsArchive, Tx.compare, name)) {
+            case (null) { };
+            case (?val) { return #ok(val)};
+        };
+        return #err("neuron not found")
     };
 
     // get all neurons. if principal specified, gets all neurons of only that principal

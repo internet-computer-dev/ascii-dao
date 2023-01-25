@@ -77,6 +77,12 @@
     console.log("storage update ", $storage)
   }
 
+  $ : {
+    console.log("status", $status)
+  }
+
+  console.log("status", $status)
+
 </script>
 {#if $status == "initializing"}
   <Loader />
