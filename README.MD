@@ -20,7 +20,7 @@ Neurons with a dissolve delay of over 6 months can participate in voting to modi
 
 Play around with the on-chain deployment at:
 
-https://gtnjc-eaaaa-aaaai-qhmva-cai.raw.ic0.app/
+https://hle4b-kaaaa-aaaai-qhmra-cai.ic0.app/
 
 You can also have a peek at the backend represented through candid interface:
 
