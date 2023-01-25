@@ -63,7 +63,7 @@
     <kbd class="kbd kbd-lg" style="font-size: 1.2em; margin-left: 1em; font-weight: 600">--my art gallery--</kbd>
   {/if}
 
-  <div class="grid grid-flow-col auto-cols-max">
+  <div class="grid grid-cols-3">
   {#each $storage.artworks as art}
     <div class="mockup-code m-3 mr-7">
       <pre style="color:gray; height: 23.5em; overflow: hidden">{art.title}<br><code style="color:antiquewhite">{art.art}</code></pre>
