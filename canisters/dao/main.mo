@@ -24,7 +24,7 @@ actor class AsciiDao() = this {
     // | _|      | _| `._____| \______/  |__|     |__| |_______||_______||_______/    
 
     // rbtree of user profiles
-    var profiles = RBT.init<Text, T.Profile>();
+    stable var profiles = RBT.init<Text, T.Profile>();
 
     // create a new user
     public shared ({caller}) func newUser( username: Text ) : async R.Result<Text, Text> {
@@ -243,9 +243,9 @@ actor class AsciiDao() = this {
     // | _|      | _| `._____| \______/  | _|       \______/  |_______/    /__/     \__\ |_______||_______/    
 
     // buffer of proposals and gallery artworks
-    var proposals = B.init<T.Proposal>();
-    let archivedProposals = B.init<T.Proposal>();
-    var daoGallery = B.init<T.GalleryArtwork>();
+    stable var proposals = B.init<T.Proposal>();
+    stable let archivedProposals = B.init<T.Proposal>();
+    stable var daoGallery = B.init<T.GalleryArtwork>();
 
     // submit a proposal
     public shared ({caller}) func submitProposal( action : T.Action, artist : Text, title : Text, note : ?Text ) : async R.Result<Text, Text> {
@@ -430,8 +430,8 @@ actor class AsciiDao() = this {
     // |__| \__| |_______| \______/  | _| `._____| \______/  |__| \__| |_______/                                                                           
 
     // rbtree of neurons
-    var neurons = RBT.init<Text, T.Neuron>();
-    var neuronsArchive = RBT.init<Text, T.Neuron>();
+    stable var neurons = RBT.init<Text, T.Neuron>();
+    stable var neuronsArchive = RBT.init<Text, T.Neuron>();
 
     // createNeuron - minimum 50 MB tokens
     public shared ({caller}) func createNeuron( amount : Nat, dissolveDelay : Int, txReceipt : Nat, name : Text ) : async R.Result<Text, Text> {
@@ -847,7 +847,7 @@ actor class AsciiDao() = this {
     };
     
     // MB token canister actor
-    stable let mbCanister = ICRC1.getMBCanister();
+    let mbCanister = ICRC1.getMBCanister();
     // Tx receipts already used to create a neuron
     stable var usedTxs : [Nat] = [];
 
