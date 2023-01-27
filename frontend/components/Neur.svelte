@@ -90,7 +90,7 @@
         <div><div style="color:green">owner: </div>{neuronData.owner}</div>
         <div><div style="color:green">amount: </div>{Number(neuronData.amount) / 100000000}MB</div>
         <div><div style="color:green">creation time: </div> {nanoToDate(Number(neuronData.creationTime))}</div>
-        <div><div style="color:green">dissolve start time: </div> {(neuronData.dissolveStartTime[0] ? neuronData.dissolveStartTime[0] : 0) == undefined ? "has not started dissolving" : nanoToDate(Number(neuronData.dissolveStartTime))}</div>
+        <div><div style="color:green">dissolve start time: </div> {(neuronData.dissolveStartTime[0] ? neuronData.dissolveStartTime[0] : 0) == (undefined || 0) ? "has not started dissolving" : nanoToDate(Number(neuronData.dissolveStartTime))}</div>
         <div><div style="color:green">dissolve delay: </div>{secondsToString(Number(neuronData.dissolveDelay))}</div>
         <div><div style="color:green">state: </div>{neuronData.state.Locked === null ? "locked" : neuronData.state.Dissolving === null ? "dissolving" : "dissolved"}</div>
         <div><div style="color:green">time until fully disolved: </div>{BigInt((neuronData.dissolveStartTime[0] ? neuronData.dissolveStartTime[0] : BigInt(0) ) + neuronData.dissolveDelay) - BigInt(Date.now() * 1000000) > BigInt(0) ? secondsToString(Number(BigInt((neuronData.dissolveStartTime[0] ? neuronData.dissolveStartTime[0] : 0) + neuronData.dissolveDelay) - BigInt(Date.now() * 1000000))) : "none"}</div>
@@ -118,9 +118,11 @@
                 {/if}
             </div>
         {/if}
+        {#if (Number(neuronData.amount) / 100000000) > 100}
         <div class="card-actions justify-end">
-            (⊙_◎) neurotic!
+            🌚
         </div>
+        {/if}
     </div>
 </div>
 </div>

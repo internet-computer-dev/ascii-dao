@@ -134,13 +134,17 @@
                     <!-- principal: {p.proposer}<br> -->
                     note: {p.note.length == 0 ? "none" : p.note[0]}<br>
                     number of voters: {p.voters.length}<br>
-                    votes needed to pass: {Number($parameters.parameters.votingThreshold) / 100000000}MB<br>
+                    {#if isNaN(Number($parameters.parameters.votingThreshold))}
+                    vote data is loading . . .<br>
+                    {:else}
+                    votes needed to pass: {Number($parameters.parameters.votingThreshold) / 100000000}<br>
                     tokens needed to vote: {Number($parameters.parameters.tokenThreshold) / 100000000}MB<br>
                     vote tally: {Number(p.voteTally) / 100000000}<br>
                         <div>
                             <progress class="progress w-20 progress-error" style="transform: rotate(180deg); color: firebrick;" value="{Number(p.voteTally) / 100000000 < 0 ? Math.abs(Number(p.voteTally) / 100000000) : 0}" max="{Number($parameters.parameters.votingThreshold) / 100000000}"></progress>
                             <progress class="progress w-20 progress-success" value="{Number(p.voteTally) / 100000000 > 0 ? Number(p.voteTally) / 100000000 : 0}" max="{Number($parameters.parameters.votingThreshold) / 100000000}"></progress>
                         </div><br>
+                    {/if}
                     <b style="font-size: 1.3em">vote:</b>
                     </div>
                     <div>

@@ -113,7 +113,7 @@
             </div>
             <p style="margin-top: 0.8em">new token threshold (1~100)</p>
             <input type="number" class="input input-outline" min="1" max="100" bind:value={newTokenThreshold} style="width: 8em; height: 2em; margin-bottom: 10px; border: 1px dotted gray">
-            <p style="margin-top: 0.5em">new token threshold (100~1000)</p>
+            <p style="margin-top: 0.5em">new voting threshold (100~1000)</p>
             <input type="number" class="input input-outline" min="100" max="1000" bind:value={newVotingThreshold} style="width: 8em; height: 2em; margin-bottom: 10px; border: 1px dotted gray">
             {#if !inAction}
             <button class="connect-button h-9 ml-10" on:click={createProposal}>create proposal</button>
